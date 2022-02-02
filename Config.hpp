@@ -70,6 +70,10 @@ public:
 			i++;
 		}
 	}
+	std::vector<Server*>	getServers()
+	{
+		return servers;
+	}
 	//FIXME delete later
 	void	check()
 	{

@@ -88,8 +88,8 @@ public:
 			std::cout << servers[j]->getRoot() << std::endl;
 			std::cout << servers[j]->getBodySize() << std::endl;
 			std::map<int, std::string>::iterator it;
-			for (it = servers[0]->getErrors()->begin(); it != servers[0]->getErrors()->end(); it++)
-				std::cout << it->first << " " << it->second << std::endl;
+			// for (it = servers[0]->getErrors()->begin(); it != servers[0]->getErrors()->end(); it++)
+			// 	std::cout << it->first << " " << it->second << std::endl;
 			for (int k = 0; k < (*servers[j]->getLocation()).size(); k++)
 			{
 				std::cout << (*servers[j]->getLocation())[k]->_path << std::endl;

@@ -76,35 +76,35 @@ void	cgi::execute()
 	unlink("out");
 }
 
-void	cgi::fillMetaVars(RequestParser req, Config con)
-{
-	_metaVars["SERVER_SOFTWARE"] = "webserv";
-	_metaVars["SERVER_NAME"] = "127.0.0.1";//req.getServerName();
-	_metaVars["GATEWAY_INTERFACE"] = "CGI/1.1";
-	_metaVars["SERVER_PROTOCOL"] = "HTTP/1.1";//req.getServerProtocol();
-	_metaVars["SERVER_PORT"] = "8080";//req.getServerPort();
-	_metaVars["REQUEST_METHOD"] = "POST";req.getRequestMethod();
-	// _metaVars["PATH_INFO"] = "/add.cgi";//req.getPathInfo();
-	//a filesystem path - root from config file (absolute path)
-	_metaVars["PATH_TRANSLATED"] = "/Users/agidget/www";//con.getRoot();
-	//relative path to my program (php or py) (from root)
-	_metaVars["SCRIPT_NAME"] = "/add.cgi";//con.getPath();
-	_metaVars["QUERY_STRING"] = "num1=7&num2=8";//req.getQueryString();
-	_metaVars["REMOTE_ADDR"] = "127.0.0.1";//req.getRemoteAddr();
-	// _metaVars["REMOTE_USER"] = ;
-	// _metaVars["REMOTE_IDENT"] = ;
-	_metaVars["CONTENT_TYPE"] = "application/x-www-form-urlencoded";//req.getContentType();
-	_metaVars["CONTENT_LENGTH"] = "13";//std::to_string(req.getContentLength());
-	_metaVars["HTTP_ACCEPT"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";//req.getAccept();
-	_metaVars["HTTP_ACCEPT_ENCODING"] = "gzip, deflate, br";//req.getAcceptEncoding();
-	_metaVars["HTTP_ACCEPT_LANGUAGE"] = "en-US,en;q=0.9";//req.getAcceptLanguage();
-	_metaVars["HTTP_CONNECTION"] = "keep-alive";//req.getConnection();
-	_metaVars["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36";//req.getUserAgent();
-	// _metaVars["HTTP_HOST"] = //req.getHost();
-	_metaVars["HTTP_SEC_FETCH_DEST"] = "document";//req.getSecFetchDest();
-	_metaVars["HTTP_SEC_FETCH_MODE"] = "navigate";//req.getSecFetchMode();
-	_metaVars["HTTP_SEC_FETCH_SITE"] = "same-origin";//req.getSecFetchSite();
-}
+// void	cgi::fillMetaVars(RequestParser req, Config con)
+// {
+// 	_metaVars["SERVER_SOFTWARE"] = "webserv";
+// 	_metaVars["SERVER_NAME"] = "127.0.0.1";//req.getServerName();
+// 	_metaVars["GATEWAY_INTERFACE"] = "CGI/1.1";
+// 	_metaVars["SERVER_PROTOCOL"] = "HTTP/1.1";//req.getServerProtocol();
+// 	_metaVars["SERVER_PORT"] = "8080";//req.getServerPort();
+// 	_metaVars["REQUEST_METHOD"] = "POST";req.getRequestMethod();
+// 	// _metaVars["PATH_INFO"] = "/add.cgi";//req.getPathInfo();
+// 	//a filesystem path - root from config file (absolute path)
+// 	_metaVars["PATH_TRANSLATED"] = "/Users/agidget/www";//con.getRoot();
+// 	//relative path to my program (php or py) (from root)
+// 	_metaVars["SCRIPT_NAME"] = "/add.cgi";//con.getPath();
+// 	_metaVars["QUERY_STRING"] = "num1=7&num2=8";//req.getQueryString();
+// 	_metaVars["REMOTE_ADDR"] = "127.0.0.1";//req.getRemoteAddr();
+// 	// _metaVars["REMOTE_USER"] = ;
+// 	// _metaVars["REMOTE_IDENT"] = ;
+// 	_metaVars["CONTENT_TYPE"] = "application/x-www-form-urlencoded";//req.getContentType();
+// 	_metaVars["CONTENT_LENGTH"] = "13";//std::to_string(req.getContentLength());
+// 	_metaVars["HTTP_ACCEPT"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";//req.getAccept();
+// 	_metaVars["HTTP_ACCEPT_ENCODING"] = "gzip, deflate, br";//req.getAcceptEncoding();
+// 	_metaVars["HTTP_ACCEPT_LANGUAGE"] = "en-US,en;q=0.9";//req.getAcceptLanguage();
+// 	_metaVars["HTTP_CONNECTION"] = "keep-alive";//req.getConnection();
+// 	_metaVars["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36";//req.getUserAgent();
+// 	// _metaVars["HTTP_HOST"] = //req.getHost();
+// 	_metaVars["HTTP_SEC_FETCH_DEST"] = "document";//req.getSecFetchDest();
+// 	_metaVars["HTTP_SEC_FETCH_MODE"] = "navigate";//req.getSecFetchMode();
+// 	_metaVars["HTTP_SEC_FETCH_SITE"] = "same-origin";//req.getSecFetchSite();
+// }
 
 std::string	cgi::getOutput()
 {

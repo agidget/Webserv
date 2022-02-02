@@ -8,7 +8,7 @@
 # include <unistd.h>
 # include <cstdlib>
 # include <fcntl.h>
-# include "request_parser/RequestParser.hpp"
+// # include "request_parser/RequestParser.hpp"
 # include "Config.hpp"
 
 # define CGI_BUFSIZE 65536
@@ -40,7 +40,7 @@ public:
 
 	void	execute();
 	char**	mapToAr();
-	void	fillMetaVars(RequestParser req, Config con);
+	// void	fillMetaVars(RequestParser req, Config con);
 
 	std::string	getOutput();
 };

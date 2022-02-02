@@ -195,6 +195,15 @@ public:
 		}
 		return i;
 	}
+	bool	checkMainLocation()
+	{
+		for (int i = 0; i < _locations.size(); i++)
+		{
+			if (_locations[i]->_path == "/")
+				return true;
+		}
+		return false;
+	}
 	int	fillServer(std::string line, int i)
 	{
 		int j = 0;
@@ -304,7 +313,7 @@ public:
 			else if (line[i] == '}')
 			{
 				if (_host.empty() || _port == 0 || _server_names.empty() || _root.empty()
-					|| _locations.empty())
+					|| _locations.empty() || !checkMainLocation())
 					errorMsg();
 				i++;
 				break ;

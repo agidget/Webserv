@@ -2,7 +2,8 @@
 #include <string>
 #include <utility>
 #include <map>
-#include "Config.hpp"
+// #include "Config.hpp"
+#include <cstdlib>
 
 typedef std::map<std::string, std::string>	cgiMap;
 
@@ -26,10 +27,14 @@ char**	mapToAr(cgiMap _metaVars)
 
 int main()
 {
-	Config	toto;
-	toto.readingFile((char *)"test.config");
-	toto.check();
+	// Config	toto;
+	// toto.readingFile((char *)"test.config");
+	// toto.check();
 
 	// int a = 400;
 	// std::cout << "lol" + std::to_string(a) << std::endl;
+
+	setenv("LOL", "lol", true);
+	while (1);
+
 }

@@ -1,8 +1,8 @@
-//
-// Created by 04294 on 28.01.2022.
-//
-
 #include "RequestParser.hpp"
+
+Server	*RequestParser::getConfig() {
+	return this->_config;
+}
 
 std::string RequestParser::getServerProtocol() {
 	return serverProtocol;
@@ -11,7 +11,7 @@ std::string RequestParser::getServerPort(){
 	return port;
 }
 
-std::string RequestParser::getQueryString() {
+std::string RequestParser::getBody() {
 	return body;
 }
 
@@ -61,9 +61,10 @@ std::string	RequestParser::getHost() {
 std::string RequestParser::getRequestMethod() {
 	return method;
 }
-std::string RequestParser::getPathTranslated() {
-	return translatedPath;
+std::string RequestParser::getPath() {
+	return path;
 }
+
 RequestParser:: RequestParser(ClientSocket *socket) {
 this->_socket = socket;
 this->request = this->_socket->getRequest();
@@ -75,9 +76,22 @@ RequestParser::RequestParser () {
 
 void RequestParser::setSocket(ClientSocket *socket) {
 	this->_socket = socket;
+	this->_config = _socket->getServer();
+	std::cout << "I am a config file for port " << _config->getPort() << std::endl;
 	this->request = this->_socket->getRequest();
+}
+
+void RequestParser::setConfig(Server *config) {
+	//this->_config = config;
+	//std::cout << "I am a config file for port " << _config->getPort() << std::endl;
+	//this->request = this->_socket->getRequest();
+	//parser();
+}
+
+void RequestParser::startParsing() {
 	parser();
 }
+
 
 bool RequestParser::checkMethodIsAllowed() {
 	if (this->method != "DELETE" && this->method != "GET" && this->method != "POST") {
@@ -130,7 +144,12 @@ void RequestParser::parseHostPort() {
 	this->serverName = hostAndPort.substr(0, hostAndPort.find(':'));
 	this->port = hostAndPort.substr(hostAndPort.find(':') + 1, hostAndPort.size());
 }
+
+//	this->location = this->_config->findLocation(this->path); // todo корень по умолчанию??? what is it?????
+
 void RequestParser::parser() {
+
+
 	parseFirstStr();
 	parseHostPort();
 	this->acceptEncoding = findParameter("Accept-Encoding: ");
@@ -145,6 +164,11 @@ void RequestParser::parser() {
 	this->body = findParameter("\n\r\n");
 	this->accept = findParameter("Accept: ");
 
+
+
+	//std::cout << "This is a current location path : " << location->_path << std::endl;
+
+	//std::cout << "Is empty body: " << this->body.empty()  << std::endl;
 	//todo чекаем допустим ли метод, если нет, сразу же возвращаем ошибку
 
 	std::cout << "*******This is a parsing result*******\nMethod: " << this->method << std::endl;

@@ -23,6 +23,7 @@
 #include "Server.hpp"
 #include "ClientSocket.hpp"
 #include "ResponseCreator.hpp"
+#include "Config.hpp"
 
 typedef struct s_pollSockets {
 	int fdsNum;

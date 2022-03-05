@@ -6,7 +6,6 @@ bool isListening(int socket, int *listeningSockets) {
 	for (int i = 0; i < LISTEN_NUM; i++) {
 		//std::cout << "isListening " << listeningSockets[i] << std::endl;
 		if (socket == listeningSockets[i]) {
-			std::cout << " true " << std::endl;
 			return true;
 		}
 	}
@@ -94,7 +93,7 @@ t_pollSockets *createFdsStruct(std::vector<Server *> servers) {
 	return newFds;
 }
 
-int createOneSocket(int port, char *host) {
+int createOneSocket(int port, std::string host) {
 	int server_fd;
 	struct sockaddr_in address;
 
@@ -145,7 +144,7 @@ std::vector<Server *> createServers() {
 	tempServer1->setHost((char *)"127.0.0.1");
 	tempServer1->setPort(8090);
 	tempServer2->setPort(8080);
-	tempServer2->setHost((char *)"127.0.0.2");
+	tempServer2->setHost((char *)"127.0.0.1");
 	//std::cout << "In function " << servers[0]->getFd() <<  " " << servers[1]->getFd() << std::endl;
 	servers.push_back(tempServer1);
 	servers.push_back(tempServer2);
@@ -188,8 +187,11 @@ Server *findServerConfig(std::vector<Server *> servers, int fd) {
 
 void sendResponse(s_pollSockets *sockets, std::map <int, ClientSocket *> clientsSockets, int i) {
 	std::string response;
+	response = clientsSockets.at(sockets->fds[i].fd)->getResponse();
+	//std::cout << "\n++++++This is response+++++++" << std::endl;
+	//std::cout << response << std::endl;
 	//response = clientsSockets.at(sockets->fds[i].fd)->getResponse();  //todo удали
-	response = createResponse(readText("./page.html"));
+	//response = createResponse(readText("/Users/gflores/newWebServ/page.html"));
 	//std::cout << response << std::endl;
 	if (send(sockets->fds[i].fd, response.c_str(), response.length(), 0) == -1) {
 		std::cout << "error." << std::endl;
@@ -224,54 +226,80 @@ void sendResponse(s_pollSockets *sockets, std::map <int, ClientSocket *> clients
 //	delete[]buffer;
 //}
 
+
+const char *findConfigFile(int argc, char const *argv[]) {
+	if (argc != 2) {
+		std::cout << "Usage: ./webServ configFileName.config" << std::endl;
+		exit(0); //todo code exit
+	}
+	return argv[1];
+}
+
 int main(int argc, char const *argv[]) {
+	Config	config;
+	config.readingFile(const_cast<char *>(findConfigFile(argc, argv)));
+	//распарсили конфиг файл и создали соответствующие сервера
+
+
 	RequestParser *requestParser = new RequestParser();
 
 	std::map<int, ClientSocket *> clientsSockets;
-
 	//std::map <int, Server *> serversSockets;
 	ResponseCreator *responseCreator = new ResponseCreator();
 
-	std::vector<Server *> servers = createServers(); //todo здесь должен быть парсинг
 
+	std::vector<Server *> servers = config.getServers();
+	for (int i = 0; i < servers.size(); i++) {
+		std::cout << "server port " << servers.at(i)->getPort() << std::endl;
+		std::cout << "server port " << servers.at(i)->getBodySize() << std::endl;
+
+	}
 	//std::cout << "Check vector: " << servers[0]->getPort() << " " << servers[1]->getPort() << std::endl;
 	createListeningSockets(&servers);
-
 
 	char *buffer;
 	s_pollSockets *sockets = createFdsStruct(servers);
 
 	int i = 0;
 	//todo сделай это нормально!!!
-	std::string response = createResponse(readText("/Users/gflores/server/page.html"));
+	std::string response = createResponse(readText("./page.html"));
 
 	while (1) {
 		int res = poll(sockets->fds, sockets->fdsNum, 3000);
 
 		if (res > 0) {
 			while (i < sockets->fdsNum) {
-
 				if (!res) {
 					std::cout << "timeout in poll\n";
 				} else if (sockets->fds[i].revents == POLLIN) {
+					std::cout << "Pollin\n";
 					if (isListening(sockets->fds[i].fd, sockets->listeningSockets)) {
 						if (!acceptConnection(sockets, i)) {
 							break;
 						}
-						//std::cout << "After accept: " << sockets->fds[sockets->fdsNum - 1].fd << std::endl;
+						std::cout << "After accept: " << sockets->fdsNum << std::endl;
+
+						if (clientsSockets.count(sockets->fds[sockets->fdsNum - 1].fd)) {
+							delete clientsSockets.at(sockets->fds[sockets->fdsNum - 1].fd);
+							clientsSockets.erase(sockets->fds[sockets->fdsNum - 1].fd);
+						}
+
 						clientsSockets.insert(
-								std::make_pair(sockets->fds[sockets->fdsNum - 1].fd, new ClientSocket())); //todo MAP
+								std::make_pair(sockets->fds[sockets->fdsNum - 1].fd, new ClientSocket())); //добавили сокет в массив отслеживания для poll
+								//нашли нужный конфиг от текущего сервера
 						clientsSockets.at(sockets->fds[sockets->fdsNum - 1].fd)->setServer(
-								findServerConfig(servers, sockets->fds[i].fd));
+								findServerConfig(servers, sockets->fds[i].fd)); //может вернуть нулл, поэтому ниже его проверка
+						//clientsSockets.at(sockets->fds[sockets->fdsNum - 1].fd)->
 						if (!clientsSockets.at(sockets->fds[sockets->fdsNum - 1].fd)->checkConfiguration()) {
 							//todo СДЕЛАЙ ЧТО-НИБУДЬ!
 							std::cout << "CATASTROPHE!!!" << std::endl;
 						}
 					} else {
+						std::cout << "Else pollin\n";
 						res = 0;
 						while (res <= 0) {
-
-							buffer = new char[3000];
+							buffer = new char[3000]; //todo выбери размер буфера!!!
+							//memset(&buffer, ' ', 3000);
 							res = recv(sockets->fds[i].fd, buffer, 1024, 0);
 							if (res == 0) {
 								std::cout << "Connection was closed." << std::endl;
@@ -281,17 +309,27 @@ int main(int argc, char const *argv[]) {
 								//todo определить корректное поведение!
 							}
 							//закидываем в мапу, где лежат клиентские сокеты и их фд, реквест в виде строки
-							clientsSockets.at(sockets->fds[i].fd)->SetRequest(buffer);
-							//этот сокет кидаем в реквест парсер, он парсит
-							requestParser->setSocket(clientsSockets.at(sockets->fds[i].fd));
+
+							std::cout << "SetRequest." << std::endl;
+							clientsSockets.at(sockets->fds[i].fd)->SetRequest(buffer, res);
+
+							//этот сокет кидаем в реквест парсер, там устанавливается соответствующий сокет и сервер-конфиг для него, он парсит
+							std::cout << "SetSocket." << std::endl;
+							requestParser->setSocket(clientsSockets.at(sockets->fds[i].fd)); //todo нужен ли?
+							//requestParser->setConfig(findServerConfig(servers, sockets->fds[i].fd));
+							std::cout << "Start parsing." << std::endl;
+							requestParser->startParsing();
 							//в мой создатель ответов кладем парсер
+							std::cout << "Set reqv." << std::endl;
 							responseCreator->setRequest(requestParser);
+							//responseCreator->setConfig(sockets->fds[i].fd->);
 							//кладем в первую мапу строчку ответа и забываем о том, что лежало в парсере и респонс креаторе
 							clientsSockets.at(sockets->fds[i].fd)->setResponse(responseCreator->getResponse());
 							sockets->fds[i].events = POLLOUT;
 							std::cout << "\nOriginal request: " << std::endl;
-							puts(reinterpret_cast<const char *>(buffer));
 							delete[]buffer;
+							//puts(reinterpret_cast<const char *>(buffer));
+
 						}
 					}
 				} else if (sockets->fds[i].revents == POLLOUT) {

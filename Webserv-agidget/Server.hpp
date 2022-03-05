@@ -97,18 +97,6 @@ public:
 		route->_autoindex = false;
 		route->_enable_uploading = false;
 	}
-	t_location *findLocation(std::string path) {
-		for (int i = 0; i < this->_locations.size(); i++) {
-			if (this->_locations[i]->_path == path) {
-				return this->_locations[i];
-			}
-		}
-		for (int i = 0; i < this->_locations.size(); i++) {
-			if (this->_locations[i]->_path == "/") {
-				return this->_locations[i];
-			}
-		}
-	}
 	int	fillLocation(t_location* route, std::string line, int i)
 	{
 		initLocation(route);
@@ -206,15 +194,6 @@ public:
 			i++;
 		}
 		return i;
-	}
-	bool	checkMainLocation()
-	{
-		for (int i = 0; i < _locations.size(); i++)
-		{
-			if (_locations[i]->_path == "/")
-				return true;
-		}
-		return false;
 	}
 	int	fillServer(std::string line, int i)
 	{
@@ -325,7 +304,7 @@ public:
 			else if (line[i] == '}')
 			{
 				if (_host.empty() || _port == 0 || _server_names.empty() || _root.empty()
-					|| _locations.empty() || !checkMainLocation())
+					|| _locations.empty())
 					errorMsg();
 				i++;
 				break ;
@@ -339,12 +318,6 @@ public:
 	std::string	getHost()
 	{
 		return _host;
-	}
-	int getFd(){
-		return fd;
-	}
-	void setFd(int newFd){
-		this->fd = newFd;
 	}
 	int	getPort()
 	{
@@ -369,12 +342,6 @@ public:
 	std::vector<t_location*>*	getLocation()
 	{
 		return &_locations;
-	}
-		void setHost(char	*newHost){
-		this->_host = newHost;
-	}
-	void setPort(int newPort){
-		this->_port = newPort;
 	}
 };
 

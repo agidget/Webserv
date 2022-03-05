@@ -13,7 +13,7 @@ public:
 	// std::string getPathTranslated() {}
 	// std::string getScriptName() {}
 	//TODO the part of URL after ? character (not so easy i think)
-	std::string getQueryString();
+	std::string getBody();
 	//unset for us coz we dont have domain name
 	// std::string getRemoteHost() {}
 	//127.0.0.1
@@ -43,14 +43,17 @@ public:
 	std::string	getSecFetchSite();
 	std::string	getHost();
 	std::string getRequestMethod();
-	std::string getPathTranslated();
+	std::string getPath();
 	RequestParser (ClientSocket *socket);
 	RequestParser ();
 	void setSocket(ClientSocket *socket);
+	void setConfig(Server *config);
+	void startParsing();
+	Server *getConfig();
 private:
-	ClientSocket *_socket;
+	ClientSocket	*_socket;
+	Server			*_config;
 	std::string method;
-	std::string translatedPath;
 	std::string request;
 	std::string path;
 	std::string serverProtocol;
@@ -67,6 +70,7 @@ private:
 	std::string contentLen;
 	std::string accept;
 	std::string userAgent;
+	t_location *location; //todo нада???
 	bool checkMethodIsAllowed();
 	int findEndOfWord(int *offset);
 	int findEndOfString(std::string str);

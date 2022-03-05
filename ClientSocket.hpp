@@ -6,17 +6,24 @@
 #ifndef SERVER_CLIENTSOCKET_H
 #define SERVER_CLIENTSOCKET_H
 
-//то, что отправляется Аделине
+
 class ClientSocket {
 private:
-	char *request; //реквест в формате, который пришел ко мне от клиента
+	std::string request; //реквест в формате, который пришел ко мне от клиента
 	char *response; //ответ клиенту
 	//думаю, тут может лежать еще все что угодно
 public:
 	Server *config; //параметры из config файла в соответствии с которыми нужно обрабатывать request
-	ClientSocket() { //todo перенеси!!!
+
+	ClientSocket() {
 
 	}
+
+	~ClientSocket() {
+		std::cout << "DESTRUCTOR " << std::endl;
+		//delete this->response;
+	};
+
 	void setResponse(char *str){
 		this->response = str;
 	}
@@ -24,16 +31,25 @@ public:
 		return response;
 	}
 	char *getRequest() {
-		return request;
+		return const_cast<char *>(request.c_str());
 	}
 //
 	void setServer(Server *newConfig) {
 		this->config = newConfig;
+		//std::cout << "I am a config file for port " << config->getPort() << std::endl;
 	}
-	void SetRequest(char *request) {
+	Server *getServer() {
+		//std::cout << "Set request: " << request << std::endl;
+		return this->config;
+	}
+
+	void SetRequest(char *request, size_t res) {
 		//std::cout << "Set request: " << request << std::endl;
 		this->request = request;
+//		std::string trimmed( this->request, //Смещаемся на 100 символов вперед от начала строки
+//							 res);
 	}
+
 	bool checkConfiguration() {
 		if (this->config == nullptr)
 			return false;
